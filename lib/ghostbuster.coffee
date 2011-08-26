@@ -199,7 +199,7 @@ class TestFile
         console.log "  \033[32m\u2713\033[0m #{name}"
       else if state == 'pending'
         pending++
-        console.log "  \033[33m\u2022\033[0m #{name}"
+        console.log "  \033[33m\u25d0\033[0m #{name}"
       else
         failure++
         console.log "  \033[31m\u2717\033[0m #{name}\n    #{@lastErrors[name] || "There was a problem"}"
