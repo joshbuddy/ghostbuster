@@ -6,15 +6,16 @@ class Ghostbuster
   autoload :Rake,  'ghostbuster/rake'
   autoload :Runner, 'ghostbuster/runner'
 
-  def initialize(path)
-    @path = path
-    @dir = File.directory?(path) ? path : File.dirname(path)
+  def initialize(*paths)
+    @paths = paths
+    @paths.flatten!
+    @dir = File.directory?(@paths[0]) ? @paths[0] : File.dirname(@paths[0])
     @ghost_lib = File.expand_path(File.join(File.dirname(__FILE__), "ghostbuster.coffee"))
     @phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
   end
 
   def run
-    files = Dir[@path].to_a.map{|f| File.expand_path(f)}
+    files = Array(@paths).map{|path| Dir[path].to_a}.flatten.map{|f| File.expand_path(f)}
     status = 1
     Dir.chdir(@dir) do
       sh "./start.sh"
