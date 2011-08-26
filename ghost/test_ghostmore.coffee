@@ -6,3 +6,8 @@ phantom.test.add "Simple form", ->
 
 phantom.test.addPending "Form should do more things", ->
   console.log "some thing here.."
+
+phantom.test.add "Simple form with wait", ->
+  @get '/form', ->
+    @wait 1, ->
+      @succeed()

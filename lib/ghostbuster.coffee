@@ -40,6 +40,9 @@ class Test
   assert: (valueFetcher) ->
     @assertions.push(new Assertion(this, valueFetcher))
     @assertions[0].start() if @assertions.length == 1
+  wait: (time, callback) ->
+    test = this
+    setTimeout (-> callback.call(test)), time * 1000
 
 class Assertion
   constructor: (@test, @fetcher) ->
