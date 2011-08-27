@@ -67,3 +67,15 @@ The available assertions are:
 * _assertLocation_ : This asserts the current browser location
 
 The closures passed for matching have access to the real DOM node, however, they do not have any access to the outside context. They must return true if the assertion is passed, anything else will be interpreted as failure.
+
+## Before and after
+
+You can add an arbitrary number of before and after blocks to be run within the context of your test. Simple call `before` and `after` on your test to add them.
+
+~~~~
+    phantom.test.before ->
+      # do some setup
+
+    phantom.test.after ->
+      # do some teardown
+~~~~

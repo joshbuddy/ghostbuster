@@ -181,27 +181,38 @@ class TestFile
   constructor: (@suite, @name) ->
     @tests = []
     @lastErrors = {}
+    @befores = []
+    @afters = []
   normalizePath: (path) -> if path.match(/^http/) then path else "#{@root}#{path}"
   addPending: (name, body) -> @tests.push new PendingTest(this, name)
+  before: (body) -> @befores.push(body)
+  after: (body) -> @afters.push(body)
   add: (name, body) ->
     for test in @tests
       throw("Identically named test already exists for name #{name} in #{@name}") if test.name == name
     @tests.push new Test(this, name, body)
   run: (callback) ->
     throw "No root is defined" unless @root?
-    count = 0
     testFile = this
     testStates = {}
-    nextTest = ->
-      testFile.tests[count].run (state) ->
-        testStates[testFile.tests[count].name] = state
-        count++
+    nextTest = (count) ->
+      test = testFile.tests[count]
+      before.call(test) for before in testFile.befores
+      try
         if count < testFile.tests.length
-          nextTest()
+          test.run (state) ->
+            testStates[test.name] = state
+            nextTest(count + 1)
         else
           testFile.report(testStates)
           callback()
-    nextTest()
+      catch e
+        testFile.lastErrors[test.name] = e.toString()
+        testStates[test.name] = false
+        nextTest(count + 1)
+      finally
+        after.call(test) for before in testFile.afters
+    nextTest(0)
   report: (testStates) ->
     success = 0
     failure = 0

@@ -1,5 +1,8 @@
 phantom.test.root = "http://127.0.0.1:4567"
 
+phantom.test.before ->
+  @var = 'sample'
+
 phantom.test.add "Simple form", ->
   @get '/form', ->
     @succeed()
@@ -19,3 +22,14 @@ phantom.test.add "Slow form", ->
     @body.assertFirst '#out', total: 3, (out) ->
       out.innerHTML == 'this is my input'
     @succeed()
+
+phantom.test.add "Before block var", ->
+  @get '/form', ->
+    @body.input "#in", @var
+    @body.click "#btn"
+    @body.assertFirst '#out', (out) ->
+      out.innerHTML == 'sample'
+    @succeed()
+
+phantom.test.add "This test will explode!", ->
+  throw "I hate you!"
