@@ -8,7 +8,7 @@ To install first `gem install ghostbuster`. Once you've done that, you can run `
 
 ## Usage
 
-Once installed, you can simply use `ghostbuster path/to/tests` to run your tests. You should get some output that looks something liek this.
+Once installed, you can simply use `ghostbuster path/to/tests` to run your tests. You should get some output that looks something like this.
 
 ~~~~
 
