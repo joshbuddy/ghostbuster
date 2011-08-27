@@ -1,6 +1,6 @@
 # Ghostbuster
 
-Automated browser testing via phantom.js, with all of the pain taken out!
+Automated browser testing via phantom.js, with all of the pain taken out! That means you get a *real browser*, with a *real DOM*, and can do *real testing*!
 
 ## Installation
 
