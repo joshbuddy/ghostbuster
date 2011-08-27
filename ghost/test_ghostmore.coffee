@@ -11,3 +11,11 @@ phantom.test.add "Simple form with wait", ->
   @get '/form', ->
     @wait 1, ->
       @succeed()
+      
+phantom.test.add "Slow form", ->
+  @get '/slow', ->
+    @body.input "#in", "this is my input"
+    @body.click "#btn"
+    @body.assertFirst '#out', total: 3, (out) ->
+      out.innerHTML == 'this is my input'
+    @succeed()

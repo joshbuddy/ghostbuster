@@ -3,12 +3,14 @@ class Test
     @page = new WebPage()
     @page.onConsoleMessage = (msg) ->
       console.log "PAGE CONSOLE: #{msg}"
-    testName = @name
-    @page.onAlert = (msg) =>
-      @runner.lastErrors[testName] = msg
+    @page.onAlert = (msg) => @setLastError(msg)
     @lastError = null
     @assertions = []
     @seenCallbacks = []
+  getLastError: -> @runner.lastErrors[@name]
+  resetLastError: -> delete @runner.lastErrors[@name]
+  setLastError: (error) ->
+    @runner.lastErrors[@name] = error
   waitForAssertions: (whenDone) ->
     if @assertions.length == 0
       whenDone.call(this)
@@ -24,7 +26,7 @@ class Test
       test = this
       loadedCallback = (status) ->
         return if test.seenCallbacks.indexOf(getCallback) != -1
-        test.seenCallbacks.push getCallback #traversing links causes this to get re-fired.
+        test.seenCallbacks.push getCallback # traversing links causes this to get re-fired.
         switch status
           when 'success'
             test.body = new Body(test)
@@ -37,16 +39,18 @@ class Test
       @callback(true)
   fail: (msg) ->
     @callback(false, msg)
-  assert: (valueFetcher) ->
-    @assertions.push(new Assertion(this, valueFetcher))
+  assert: (opts, valueFetcher) ->
+    @assertions.push(new Assertion(this, opts, valueFetcher))
     @assertions[0].start() if @assertions.length == 1
   wait: (time, callback) ->
     test = this
     setTimeout (-> callback.call(test)), time * 1000
 
 class Assertion
-  constructor: (@test, @fetcher) ->
+  constructor: (@test, @opts, @fetcher) ->
     @count = 0
+    @totalTime = if @opts['total'] then @opts['total'] * 1000 else 1000
+    @everyTime = if @opts['every'] then @opts['every'] else 75
   start: ->
     test              = @test
     assertion         = this
@@ -54,21 +58,18 @@ class Assertion
       assertion.start()
     if @count == 0
       fatalCallback = ->
-        test.fail(test.lastError || "This assertion failed to complete.")
-      @fatal = setTimeout(fatalCallback, 1000)
+        test.fail(test.getLastError() || "This assertion failed to complete.")
+      @fatal = setTimeout(fatalCallback, assertion.totalTime)
     @fetcher.call test, (val) ->
       assertion.count++
       if val == true
-        delete test.runner.lastErrors[test.name];
+        test.resetLastError()
         test.assertions.splice(test.assertions.indexOf(assertion), 1)
         clearTimeout assertion.fatal
         if test.assertions.length > 0
           test.assertions[0].start()
-      else if assertion.count > 10
-        clearTimeout assertion.fatal
-        test.fail(test.lastError)
       else
-        setTimeout(failedCallback, 75)
+        setTimeout(failedCallback, test.everyTime)
         
 class Body
   constructor: (@test) ->
@@ -99,11 +100,12 @@ class Body
     "
     @test.page.evaluate(fn)
 
-  assertLocation: (path) ->
+  assertLocation: (path, opts) ->
+    opts ||= {}
     test = @test
     location = @test.runner.normalizePath(path)
-    @test.assert (withValue) ->
-      alerter = if test.runner.lastErrors[test.name]? then "" else "alert('Assert location failed: Excepted #{location}, got '+currentLocation);"
+    @test.assert opts, (withValue) ->
+      alerter = if test.getLastError()? then "" else "alert('Assert location failed: Excepted #{location}, got '+currentLocation);"
       eval "
         var fn = function() {
           var currentLocation = window.location.href;
@@ -117,10 +119,13 @@ class Body
       "
       withValue @page.evaluate(fn)
 
-  assertFirst: (selector, assertionCallback) ->
+  assertFirst: (selector, opts, assertionCallback) ->
+    unless assertionCallback?
+      assertionCallback = opts
+      opts = {}
     test = @test
-    @test.assert (withValue) ->
-      alerter = if test.runner.lastErrors[test.name]? then "" else "alert('Assert first for selector #{selector} did not meet expectations');"
+    @test.assert opts, (withValue) ->
+      alerter = if test.getLastError()? then "" else "alert('Assert first for selector #{selector} did not meet expectations');"
       eval "
         var evaluator = function() {
           try {
@@ -142,8 +147,11 @@ class Body
       "
       withValue @page.evaluate(evaluator)
 
-  assertAll: (selector, assertionCallback) ->
-    @test.assert (withValue) ->
+  assertAll: (selector, opts, assertionCallback) ->
+    unless assertionCallback?
+      assertionCallback = opts
+      opts = {}
+    @test.assert opts, (withValue) ->
       eval "
         var evaluator = function() {
           try {
@@ -175,7 +183,10 @@ class TestFile
     @lastErrors = {}
   normalizePath: (path) -> if path.match(/^http/) then path else "#{@root}#{path}"
   addPending: (name, body) -> @tests.push new PendingTest(this, name)
-  add: (name, body) -> @tests.push new Test(this, name, body)
+  add: (name, body) ->
+    for test in @tests
+      throw("Identically named test already exists for name #{name} in #{@name}") if test.name == name
+    @tests.push new Test(this, name, body)
   run: (callback) ->
     throw "No root is defined" unless @root?
     count = 0

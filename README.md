@@ -51,3 +51,19 @@ Look inside `ghost` to see some examples of what actual tests would look like. L
 ~~~~
 
 To use this within rake, just put `require 'ghostbuster/install_rake'` in your Rakefile.
+
+## Assertions
+
+Assertions are run in order, and only one assertion at a time can run. An assertion will have at most one second to complete. If you want to change the total amount of time an assertion will take, you can supply that time.
+
+~~~~
+    @body.assertFirst 'p', total: 3, (p) ->           # this asserts the first paragraph's inner text
+~~~~
+
+The available assertions are:
+
+* _assertFirst_ : This asserts for the first matching DOM element
+* _assertAll_ : This asserts for the each matching DOM element
+* _assertLocation_ : This asserts the current browser location
+
+The closures passed for matching have access to the real DOM node, however, they do not have any access to the outside context. They must return true if the assertion is passed, anything else will be interpreted as failure.

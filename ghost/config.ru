@@ -9,6 +9,10 @@ class App < Sinatra::Base
   get "/form" do
     erb :form
   end
+
+  get "/slow" do
+    erb :slow
+  end
 end
 
 run App
