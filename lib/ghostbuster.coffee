@@ -19,8 +19,11 @@ class Test
       waiting = ->
         test.waitForAssertions(whenDone)
       setTimeout waiting, 10
-  run: (@callback) ->
-    @testBody.call(this)
+  actuallyRun: -> true
+  run: (callback) ->
+    @runWithFunction(@testBody, callback)
+  runWithFunction: (fn, @callback) ->
+    fn.call(this)
   get: (path, getCallback) ->
     @waitForAssertions ->
       test = this
@@ -176,7 +179,7 @@ class Body
 class PendingTest
   constructor: (@runner, @name) ->
   run: (callback) -> callback('pending')
-
+  actuallyRun: -> false
 class TestFile
   constructor: (@suite, @name) ->
     @tests = []
@@ -191,27 +194,39 @@ class TestFile
     for test in @tests
       throw("Identically named test already exists for name #{name} in #{@name}") if test.name == name
     @tests.push new Test(this, name, body)
-  run: (callback) ->
+  run: (callback, idx) ->
     throw "No root is defined" unless @root?
     testFile = this
     testStates = {}
     nextTest = (count) ->
-      test = testFile.tests[count]
-      before.call(test) for before in testFile.befores
-      try
-        if count < testFile.tests.length
+      if count >= testFile.tests.length
+        testFile.report(testStates)
+        callback()
+      else
+        test = testFile.tests[count]
+        if test.actuallyRun()
+          processBefore = (idx, callback) ->
+            if testFile.befores[idx]?
+              test.runWithFunction testFile.befores[idx], ->
+                processBefore(idx + 1, callback)
+            else
+              callback()
+            return
+          processBefore 0, ->
+            try
+              test.run (state) ->
+                testStates[test.name] = state
+                nextTest(count + 1)
+            catch e
+              testFile.lastErrors[test.name] = e.toString()
+              testStates[test.name] = false
+              nextTest(count + 1)
+            finally
+              after.call(test) for after in testFile.afters
+        else
           test.run (state) ->
             testStates[test.name] = state
             nextTest(count + 1)
-        else
-          testFile.report(testStates)
-          callback()
-      catch e
-        testFile.lastErrors[test.name] = e.toString()
-        testStates[test.name] = false
-        nextTest(count + 1)
-      finally
-        after.call(test) for before in testFile.afters
     nextTest(0)
   report: (testStates) ->
     success = 0
