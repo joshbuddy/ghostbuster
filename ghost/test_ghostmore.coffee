@@ -2,6 +2,7 @@ phantom.test.root = "http://127.0.0.1:4567"
 
 phantom.test.before ->
   @var = 'sample'
+  @succeed()
 
 phantom.test.add "Simple form", ->
   @get '/form', ->
