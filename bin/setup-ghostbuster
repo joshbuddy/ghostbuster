@@ -16,6 +16,8 @@ when /darwin/
         puts "Downloading and install phantom.js"
         system("curl #{phantom_url} -O") or raise("Unable to download from #{phantom_url}")
         system("open #{File.basename(phantom_url)}") or raise("Unable to open disk image")
+        puts("Giving time to mount the image...")
+        system("sleep 4")
       end
       system("cp -r /Volumes/phantomjs/phantomjs.app #{root}")
       File.exist?("#{root}/phantomjs.app") or raise("Unable to copy phantomjs from your disk image")
