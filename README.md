@@ -70,11 +70,12 @@ The closures passed for matching have access to the real DOM node, however, they
 
 ## Before and after
 
-You can add an arbitrary number of before and after blocks to be run within the context of your test. Simple call `before` and `after` on your test to add them.
+You can add an arbitrary number of before and after blocks to be run within the context of your test. Simply call `before` and `after` on your test to add them. You have to call @succeed in the before block to continue processing your test.
 
 ~~~~
     phantom.test.before ->
       # do some setup
+      @succeed()
 
     phantom.test.after ->
       # do some teardown
