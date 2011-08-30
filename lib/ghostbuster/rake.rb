@@ -7,11 +7,11 @@ class Ghostbuster
       end
     end
     def self.include_rake_tasks(opts = {})
+      opts[:path]      ||= './ghost'
       opts[:task_name] ||= :"test:ghostbuster"
-      opts[:file_pattern] ||= "ghost/test_*.{coffee,js}"
       desc "Run ghostbuster tasks"
       task opts[:task_name] do
-        Ghostbuster.new(opts[:file_pattern]).run
+        Ghostbuster.new(opts[:path]).run
       end
     end
   end

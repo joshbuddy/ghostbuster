@@ -8,7 +8,37 @@ To install first `gem install ghostbuster`. Once you've done that, you can run `
 
 ## Usage
 
-Once installed, you can simply use `ghostbuster path/to/tests` to run your tests. You should get some output that looks something like this.
+Once installed, you can simply use `ghostbuster [path/to/Ghostfile]` to run your tests.
+
+## `Ghostfile`
+
+Your `Ghostfile` handles your configuration. To set the pattern use:
+
+~~~~
+    ghost.pattern = "test_*.coffee" # this is the default
+~~~~
+
+To enable (or disable) screenshots use:
+
+~~~~
+  ghost.take_screenshots! # or #do_not_takescreenshots! defaults to take_screenshots!
+~~~~
+
+To set the directory your screenshots will save to use:
+
+~~~~
+    ghost.screenshot_dir = '.'
+~~~~
+
+To set the dimensions for the screenshots use:
+
+~~~~
+    ghost.screenshot_dimensions 800, 2000 # x, y
+~~~~
+
+If no Ghostfile is found, it will simply use the defaults.
+
+You should get some output that looks something like this.
 
 ~~~~
 

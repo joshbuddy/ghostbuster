@@ -1,12 +1,16 @@
 class Test
   constructor: (@runner, @name, @testBody) ->
     @page = new WebPage()
+    if @runner.useScreenshots()
+      @page.viewportSize = @runner.viewportDimensions()
     @page.onConsoleMessage = (msg) ->
       console.log "PAGE CONSOLE: #{msg}"
     @page.onAlert = (msg) => @setLastError(msg)
     @lastError = null
     @assertions = []
     @seenCallbacks = []
+    @assertionIndex = 0
+  nameForRender: -> "#{@runner.suite.screenshot_dir}/#{@runner.nameForRender()}-#{@name.toLowerCase()}".replace(///\s///g, '_').replace(///'///g, '')
   getLastError: -> @runner.lastErrors[@name]
   resetLastError: -> delete @runner.lastErrors[@name]
   setLastError: (error) ->
@@ -43,17 +47,18 @@ class Test
   fail: (msg) ->
     @callback(false, msg)
   assert: (opts, valueFetcher) ->
-    @assertions.push(new Assertion(this, opts, valueFetcher))
+    @assertions.push(new Assertion(this, ++@assertionIndex, opts, valueFetcher))
     @assertions[0].start() if @assertions.length == 1
   wait: (time, callback) ->
     test = this
     setTimeout (-> callback.call(test)), time * 1000
 
 class Assertion
-  constructor: (@test, @opts, @fetcher) ->
+  constructor: (@test, @idx, @opts, @fetcher) ->
     @count = 0
     @totalTime = if @opts['total'] then @opts['total'] * 1000 else 1000
     @everyTime = if @opts['every'] then @opts['every'] else 75
+  nameForRender: -> "#{@test.nameForRender()}-#{@idx}.png"
   start: ->
     test              = @test
     assertion         = this
@@ -69,6 +74,8 @@ class Assertion
         test.resetLastError()
         test.assertions.splice(test.assertions.indexOf(assertion), 1)
         clearTimeout assertion.fatal
+        if test.runner.useScreenshots()
+          test.page.render assertion.nameForRender()
         if test.assertions.length > 0
           test.assertions[0].start()
       else
@@ -180,12 +187,16 @@ class PendingTest
   constructor: (@runner, @name) ->
   run: (callback) -> callback('pending')
   actuallyRun: -> false
+
 class TestFile
   constructor: (@suite, @name) ->
     @tests = []
     @lastErrors = {}
     @befores = []
     @afters = []
+  nameForRender: -> @name.toLowerCase()
+  useScreenshots: -> @suite.screenshots
+  viewportDimensions: -> width: @suite.screenshot_x, height: @suite.screenshot_y
   normalizePath: (path) -> if path.match(/^http/) then path else "#{@root}#{path}"
   addPending: (name, body) -> @tests.push new PendingTest(this, name)
   before: (body) -> @befores.push(body)
@@ -257,7 +268,11 @@ class TestSuite
     @failure += failure
     @pending += pending
   run: ->
-    count = 0
+    @screenshots    = @args[0] == 'true'
+    @screenshot_x   = @args[1]
+    @screenshot_y   = @args[2]
+    @screenshot_dir = @args[3]
+    count = 4
     suite = this
     runNextTest = ->
       if suite.args.length == count

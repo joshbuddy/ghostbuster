@@ -5,12 +5,12 @@ class Ghostbuster
     end
 
     def run
-      if @args.size == 0
-        puts "ghostbuster <path/to/tests>"
+      if @args.size == 1 && @args.first == /^--?[\?h](|elp)$/i or @args.size > 1
+        puts "ghostbuster [path/to/Ghostfile]"
         puts "  Version #{VERSION}"
-        exit(1)
+        exit(0)
       else
-        Ghostbuster.new(@args).run
+        Ghostbuster.new(@args.first).run
       end
     end
   end

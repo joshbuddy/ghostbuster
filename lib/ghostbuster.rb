@@ -1,22 +1,23 @@
 require 'ghostbuster/version'
 require 'ghostbuster/shell'
+require 'ghostbuster/config'
 
 class Ghostbuster
   include Shell
   autoload :Rake,  'ghostbuster/rake'
   autoload :Runner, 'ghostbuster/runner'
 
-  def initialize(*paths)
-    @paths = paths
-    @paths.flatten!
-    @dir = File.directory?(@paths[0]) ? @paths[0] : File.dirname(@paths[0])
+  def initialize(path)
+    @path = File.exist?(path) ? path : '.'
+    @dir = File.directory?(@path) ? @path : File.basename(@path)
+    @file = File.directory?(@dir) ? File.join(@dir, 'Ghostfile') : @dir
     @ghost_lib = File.expand_path(File.join(File.dirname(__FILE__), "ghostbuster.coffee"))
     @phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
+    @config = Config.new(@file)
     STDOUT.sync = true
   end
 
   def run
-    files = Array(@paths).map{|path| Dir[path].to_a}.flatten.map{|f| File.expand_path(f)}
     status = 1
     Dir.chdir(@dir) do
       spinner "Starting server" do
@@ -24,7 +25,7 @@ class Ghostbuster
         sleep 2
       end
       begin
-        _, status = Process.waitpid2 fork { exec("#{@phantom_bin} #{@ghost_lib} #{files.join(' ')}") }
+        _, status = Process.waitpid2 fork { exec("#{@phantom_bin} #{@ghost_lib} #{@config.screenshots?} #{@config.screenshot_x} #{@config.screenshot_y} #{File.expand_path(@config.screenshot_dir)} #{Dir[@config.pattern].to_a.join(' ')}") }
       ensure
         spinner "Stopping server" do
           sh "./stop.sh"
