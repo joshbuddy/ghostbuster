@@ -10,7 +10,7 @@ To install first `gem install ghostbuster`. Once you've done that, you can run `
 
 Once installed, you can simply use `ghostbuster [path/to/Ghostfile]` to run your tests.
 
-## `Ghostfile`
+## Ghostfile
 
 Your `Ghostfile` handles your configuration. To set the pattern use:
 
