@@ -18,6 +18,8 @@ For [1mtest_ghostmore.coffee[0m
   [32m✓[0m Before block var
   [31m✗[0m This test will explode!
     I hate you!
+  [31m✗[0m This test has no succeed
+    This test took too long
 
-7 success, 3 failure, 1 pending
+7 success, 4 failure, 1 pending
 Stopping server

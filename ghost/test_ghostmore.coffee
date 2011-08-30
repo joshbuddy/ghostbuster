@@ -34,3 +34,7 @@ phantom.test.add "Before block var", ->
 
 phantom.test.add "This test will explode!", ->
   throw "I hate you!"
+
+phantom.test.add "This test has no succeed", ->
+  @get '/form', ->
+    "so, like, this test sucks"

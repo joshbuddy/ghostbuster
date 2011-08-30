@@ -21,14 +21,14 @@ class Ghostbuster
     status = 1
     Dir.chdir(@dir) do
       spinner "Starting server" do
-        sh "./start.sh"
+        sh @config.start_command
         sleep 2
       end
       begin
         _, status = Process.waitpid2 fork { exec("#{@phantom_bin} #{@ghost_lib} #{@config.screenshots?} #{@config.screenshot_x} #{@config.screenshot_y} #{File.expand_path(@config.screenshot_dir)} #{Dir[@config.pattern].to_a.join(' ')}") }
       ensure
         spinner "Stopping server" do
-          sh "./stop.sh"
+          sh @config.stop_command
         end
       end
     end

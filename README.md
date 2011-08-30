@@ -21,7 +21,7 @@ Your `Ghostfile` handles your configuration. To set the pattern use:
 To enable (or disable) screenshots use:
 
 ~~~~
-  ghost.take_screenshots! # or #do_not_takescreenshots! defaults to take_screenshots!
+    ghost.take_screenshots! # or #do_not_takescreenshots! defaults to take_screenshots!
 ~~~~
 
 To set the directory your screenshots will save to use:
@@ -35,6 +35,20 @@ To set the dimensions for the screenshots use:
 ~~~~
     ghost.screenshot_dimensions 800, 2000 # x, y
 ~~~~
+
+To set the command for starting your server use:
+
+~~~~
+    ghost.start_command "./start.sh"
+~~~~
+
+To set the command for stopping your server use:
+
+~~~~
+    ghost.stop_command "./stop.sh"
+~~~~
+
+
 
 If no Ghostfile is found, it will simply use the defaults.
 

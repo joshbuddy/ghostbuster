@@ -16,7 +16,9 @@ class Test
   setLastError: (error) ->
     @runner.lastErrors[@name] = error
   waitForAssertions: (whenDone) ->
+    @stopTestTimer()
     if @assertions.length == 0
+      @startTestTimer()
       whenDone.call(this)
     else
       test = this
@@ -25,7 +27,18 @@ class Test
       setTimeout waiting, 10
   actuallyRun: -> true
   run: (callback) ->
+    @startTestTimer()
     @runWithFunction(@testBody, callback)
+  stopTestTimer: ->
+    if @testTimer?
+      clearTimeout @testTimer
+      @testTimer = null
+  startTestTimer: ->
+    test = this
+    @testTimer ||= setTimeout (->
+      test.setLastError("This test took too long")
+      test.fail()
+    ), 5000
   runWithFunction: (fn, @callback) ->
     fn.call(this)
   get: (path, getCallback) ->
@@ -43,8 +56,10 @@ class Test
       @page.open @runner.normalizePath(path), loadedCallback
   succeed: ->
     @waitForAssertions ->
+      @stopTestTimer()
       @callback(true)
   fail: (msg) ->
+    @stopTestTimer()
     @callback(false, msg)
   assert: (opts, valueFetcher) ->
     @assertions.push(new Assertion(this, ++@assertionIndex, opts, valueFetcher))
@@ -65,6 +80,7 @@ class Assertion
     failedCallback    = ->
       assertion.start()
     if @count == 0
+      test.stopTestTimer()
       fatalCallback = ->
         test.fail(test.getLastError() || "This assertion failed to complete.")
       @fatal = setTimeout(fatalCallback, assertion.totalTime)
@@ -72,6 +88,7 @@ class Assertion
       assertion.count++
       if val == true
         test.resetLastError()
+        test.startTestTimer()
         test.assertions.splice(test.assertions.indexOf(assertion), 1)
         clearTimeout assertion.fatal
         if test.runner.useScreenshots()
@@ -229,6 +246,7 @@ class TestFile
                 testStates[test.name] = state
                 nextTest(count + 1)
             catch e
+              test.stopTestTimer()
               testFile.lastErrors[test.name] = e.toString()
               testStates[test.name] = false
               nextTest(count + 1)

@@ -1,7 +1,6 @@
 class Ghostbuster
   class Config
-
-    attr_accessor :pattern, :screenshot_dir
+    attr_accessor :pattern, :screenshot_dir, :start_command, :stop_command
     attr_reader :screenshot_x, :screenshot_y
     def initialize(path_to_file = nil)
       @config_file = path_to_file || './Ghostfile'
@@ -9,6 +8,7 @@ class Ghostbuster
       @pattern = "./test_*.coffee"
       @screenshot_dir = "."
       @screenshots = true
+      @start_command, @stop_command = "./start.sh", "./stop.sh"
       if File.exist?(@config_file)
         instance_eval File.read(@config_file), @config_file, 1
       end
