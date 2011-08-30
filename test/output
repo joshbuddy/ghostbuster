@@ -1,7 +1,7 @@
 (in /Users/joshbuddy/Development/ghostbuster)
 Starting server
 GhostBuster
-For [1m/Users/joshbuddy/Development/ghostbuster/ghost/test_ghost.coffee[0m
+For [1mtest_ghost.coffee[0m
   [32m✓[0m Simple index
   [32m✓[0m Form input
   [32m✓[0m Link traversal
@@ -10,7 +10,7 @@ For [1m/Users/joshbuddy/Development/ghostbuster/ghost/test_ghost.coffee[0m
   [31m✗[0m Form input not equal
     Assert first for selector #out did not meet expectations
 
-For [1m/Users/joshbuddy/Development/ghostbuster/ghost/test_ghostmore.coffee[0m
+For [1mtest_ghostmore.coffee[0m
   [32m✓[0m Simple form
   [33m◐[0m Form should do more things
   [32m✓[0m Simple form with wait
