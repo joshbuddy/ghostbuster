@@ -8,7 +8,7 @@ class Ghostbuster
   autoload :Runner, 'ghostbuster/runner'
 
   def initialize(path)
-    @path = File.exist?(path) ? path : '.'
+    @path = path && File.exist?(path) ? path : '.'
     @dir = File.directory?(@path) ? @path : File.basename(@path)
     @file = File.directory?(@dir) ? File.join(@dir, 'Ghostfile') : @dir
     @ghost_lib = File.expand_path(File.join(File.dirname(__FILE__), "ghostbuster.coffee"))
