@@ -8,9 +8,19 @@ To install first `gem install ghostbuster`. Once you've done that, you can run `
 
 ## Usage
 
+### Standalone
+
 Once installed, you can simply use `ghostbuster [path/to/Ghostfile]` to run your tests.
 
-## Ghostfile
+### Rake
+
+As well, you can install Ghostbuster to run as a rake task:
+
+~~~~
+    require 'ghostbuster/install_rake'
+~~~~
+
+### Configuration via Ghostfile
 
 Your `Ghostfile` handles your configuration. To set the pattern use:
 
@@ -48,9 +58,15 @@ To set the command for stopping your server use:
     ghost.stop_command "./stop.sh"
 ~~~~
 
+To set the location of your phantomjs binary, use:
 
+~~~~
+    ghost.phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
+~~~~
 
 If no Ghostfile is found, it will simply use the defaults.
+
+### Output
 
 You should get some output that looks something like this.
 

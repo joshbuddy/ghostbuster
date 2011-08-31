@@ -12,7 +12,6 @@ class Ghostbuster
     @dir = File.directory?(@path) ? @path : File.basename(@path)
     @file = File.directory?(@dir) ? File.join(@dir, 'Ghostfile') : @dir
     @ghost_lib = File.expand_path(File.join(File.dirname(__FILE__), "ghostbuster.coffee"))
-    @phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
     @config = Config.new(@file)
     STDOUT.sync = true
   end
@@ -25,7 +24,7 @@ class Ghostbuster
         sleep 2
       end
       begin
-        _, status = Process.waitpid2 fork { exec("#{@phantom_bin} #{@ghost_lib} #{@config.screenshots?} #{@config.screenshot_x} #{@config.screenshot_y} #{File.expand_path(@config.screenshot_dir)} #{Dir[@config.pattern].to_a.join(' ')}") }
+        _, status = Process.waitpid2 fork { exec("#{@config.phantom_bin} #{@ghost_lib} #{@config.screenshots?} #{@config.screenshot_x} #{@config.screenshot_y} #{File.expand_path(@config.screenshot_dir)} #{Dir[@config.pattern].to_a.join(' ')}") }
       ensure
         spinner "Stopping server" do
           sh @config.stop_command
