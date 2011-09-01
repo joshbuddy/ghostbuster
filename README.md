@@ -142,6 +142,7 @@ The available assertions are:
 * _assertFirst_ : This asserts for the first matching DOM element
 * _assertAll_ : This asserts for the each matching DOM element
 * _assertLocation_ : This asserts the current browser location
+* _assertCount_ : This asserts the number of elements matching a selector
 
 The closures passed for matching have access to the real DOM node, however, they do not have any access to the outside context. They must return true if the assertion is passed, anything else will be interpreted as failure.
 
