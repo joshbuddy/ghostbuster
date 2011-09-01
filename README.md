@@ -136,35 +136,37 @@ Assertions are run in order, and only one assertion at a time can run. An assert
 
     @body.assertFirst 'p', total: 3, (p) ->           # this asserts the first paragraph's inner text
 
+The options for all assertions currently accepts `total`, which is the total amount of time this assertion will run for in seconds.
+
 The available assertion function are available on `body`:
 
 ### assertFirst
 
-*Arguments*: selector, callback
+*Arguments*: selector, [options], callback
 
 The callback will be called with the first matching DOM element for the selector. The callback must return `true` if this assertion is met.
 
 ### assertAll
 
-*Arguments*: selector, callback
+*Arguments*: selector, [options], callback
 
 The callback will be called for each matching DOM element for the selector. The arguments supplied to the callback is the DOM element and the index (starting at 0). The callback must return `true` if this assertion is met.
 
 ### assertLocation
 
-*Arguments*: location
+*Arguments*: location, [options]
 
 This assertion will attempt to match the current browser location. If your location does not start with `http`, it will be considered relative to the root of your test.
 
 ### assertCount
 
-*Arguments*: selector, callback
+*Arguments*: selector, [options], callback
 
 This callback will be called with the number of matching DOM elements for this selector. The callback must return `true` if this assertion is met.
 
 ### assertCountAndAll
 
-*Arguments*: selector, count, callback
+*Arguments*: selector, count, [options], callback
 
 The callback will be called for each matching DOM element for the selector. It will only be called if the number of matching elements is equal to `count`. The arguments supplied to the callback is the DOM element and the index (starting at 0). The callback must return `true` if this assertion is met.
 
