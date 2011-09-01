@@ -144,7 +144,7 @@ class Body
         var evaluator = function() {
           try {
             var assertionCallback = #{assertionCallback.toString()};
-            var count = document.querySelector('#{selector}').length;
+            var count = document.querySelectorAll('#{selector}').length;
             var ret = assertionCallback(count);
             if (ret) {
               return true;
