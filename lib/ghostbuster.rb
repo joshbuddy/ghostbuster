@@ -31,7 +31,7 @@ class Ghostbuster
         end
       end
     end
-    exit(status)
+    exit(status.to_i)
   end
 
   def self.run(path)
