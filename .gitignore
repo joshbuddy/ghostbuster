@@ -2,5 +2,5 @@
 .bundle
 Gemfile.lock
 pkg/*
-ghost/log/thin.log
 *.png
+this.log
