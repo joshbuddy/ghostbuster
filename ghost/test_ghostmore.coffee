@@ -16,7 +16,7 @@ phantom.test.add "Simple form with wait", ->
     @wait 1, ->
       @succeed()
       
-phantom.test.add "Slow form", ->
+phantom.test.add "Slow form", total: 10, ->
   @get '/slow', ->
     @body.input "#in", "this is my input"
     @body.click "#btn"
