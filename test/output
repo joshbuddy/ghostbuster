@@ -21,5 +21,10 @@ For [1mtest_ghostmore.coffee[0m
   [31m✗[0m This test has no succeed
     This test took too long
 
-7 success, 4 failure, 1 pending
+For [1mtest_injs.js[0m
+  [32m✓[0m Test for 3 li's
+
+For [1mtest_withoutroot.js[0m
+  [31m✗[0m No root is defined
+8 success, 5 failure, 1 pending
 Stopping server

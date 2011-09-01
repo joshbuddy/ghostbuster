@@ -35,3 +35,4 @@ phantom.test.add "Form input not equal", ->
     @body.assertFirst '#out', (out) ->
       out.innerHTML == 'this is NOT my input'
     @succeed()
+

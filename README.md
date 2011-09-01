@@ -14,7 +14,7 @@ Once installed, you can simply use `ghostbuster [path/to/Ghostfile]` to run your
 
 ### Rake
 
-As well, you can install Ghostbuster to run as a rake task:
+As well, you can install Ghostbuster to run as a rake task. To do this, add this to your `Rakefile`:
 
 ~~~~
     require 'ghostbuster/install_rake'
@@ -25,7 +25,7 @@ As well, you can install Ghostbuster to run as a rake task:
 Your `Ghostfile` handles your configuration. To set the pattern use:
 
 ~~~~
-    ghost.pattern = "test_*.coffee" # this is the default
+    ghost.pattern = "test_*.{js,coffee}" # this is the default
 ~~~~
 
 To enable (or disable) screenshots use:
@@ -96,6 +96,8 @@ Your test directory should look something like this:
     
 Look inside `ghost` to see some examples of what actual tests would look like. Let's dive into a couple of simple examples.
 
+Here is one in Coffeescript.
+
 ~~~~
 
     phantom.test.root = "http://127.0.0.1:4567" # you must specify your root.
@@ -110,7 +112,22 @@ Look inside `ghost` to see some examples of what actual tests would look like. L
 
 ~~~~
 
-To use this within rake, just put `require 'ghostbuster/install_rake'` in your Rakefile.
+Here is the same test in Javascript.
+
+~~~~
+
+    phantom.test.root = "http://127.0.0.1:4567";  // you must specify your root.
+
+    phantom.test.add("Simple index", function() { // this adds a test
+      this.get('/', function() {                  // this will get your a path relative to your root
+        // this asserts the first paragraph's inner text
+        this.body.assertFirst('p', function(p) { return p.innerHTML == 'This is my paragraph'});
+        // this asserts all li's have the test, List item {num}
+        this.body.assertAll('ul li', function(li, idx) { return li.innerHTML == "List item "+(idx + 1)});
+        this.succeed();
+      });                                         
+    });
+~~~~
 
 ## Assertions
 

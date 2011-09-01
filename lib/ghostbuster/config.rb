@@ -5,7 +5,7 @@ class Ghostbuster
     def initialize(path_to_file = nil)
       @config_file = path_to_file || './Ghostfile'
       @screenshot_x, @screenshot_y = 800, 2000
-      @pattern = "./test_*.coffee"
+      @pattern = "./test_*.{coffee,js}"
       @phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
       @screenshot_dir = "."
       @screenshots = true

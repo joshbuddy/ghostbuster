@@ -127,6 +127,35 @@ class Body
     "
     @test.page.evaluate(fn)
 
+  assertCount: (selector, opts, assertionCallback) ->
+    unless assertionCallback?
+      assertionCallback = opts
+      opts = {}
+    test = @test
+    @test.assert opts, (withValue) ->
+      alerter = if test.getLastError()? then "" else "alert('Assert count for selector #{selector} did not meet expectations, last count is '+count);"
+      eval "
+        var evaluator = function() {
+          try {
+            var assertionCallback = #{assertionCallback.toString()};
+            var count = document.querySelector('#{selector}').length;
+            var ret = assertionCallback(count);
+            if (ret) {
+              return true;
+            } else {
+              #{alerter}
+              return false;
+            }
+          } catch(e) {
+            var err = 'Assert count for selector #{selector} encountered an unexpected error:'+e;
+            console.log(err);
+            alert(err);
+            return false;
+          }
+        };
+      "
+      withValue @page.evaluate(evaluator)
+
   assertLocation: (path, opts) ->
     opts ||= {}
     test = @test
@@ -300,7 +329,14 @@ class TestSuite
         testFile = suite.args[count]
         phantom.test = new TestFile(suite, testFile)
         if phantom.injectJs(testFile)
-          phantom.test.run ->
+          try
+            phantom.test.run ->
+              count++
+              runNextTest()
+          catch e
+            console.log "For \033[1m#{testFile}\033[0m"
+            console.log "  \033[31m\u2717\033[0m #{e.toString()}"
+            suite.failure++
             count++
             runNextTest()
         else
