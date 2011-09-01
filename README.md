@@ -84,7 +84,7 @@ You should get some output that looks something like this.
 
     For /Users/joshbuddy/Development/ghostbuster/ghost/test_ghostmore.coffee
       ✓ Simple form
-      • Form should do more things
+      ◐ Form should do more things
 
 ~~~~
 
