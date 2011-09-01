@@ -41,10 +41,17 @@ class Test
     ), 5000
   runWithFunction: (fn, @callback) ->
     fn.call(this)
-  get: (path, getCallback) ->
+  get: (path, opts, getCallback) ->
+    unless getCallback?
+      getCallback = opts
+      opts = {}
     @waitForAssertions ->
       test = this
+      fatalCallback = ->
+        test.fail("The request for #{@runner.normalizePath(path)} failed")
+      fatal = setTimeout fatalCallback, if opts.total then opts.total * 1000 else 1000
       loadedCallback = (status) ->
+        clearTimeout fatal
         return if test.seenCallbacks.indexOf(getCallback) != -1
         test.seenCallbacks.push getCallback # traversing links causes this to get re-fired.
         switch status
@@ -112,17 +119,16 @@ class Body
     "
     @test.page.evaluate(input)
 
-  click: (selector) ->
+  click: (selector, idx) ->
+    idx ||= 0
     eval "
       var fn = function() {
         var targets = document.querySelectorAll('#{selector}'),
-            evt = document.createEvent('MouseEvents'), 
-            i, len; 
+            evt = document.createEvent('MouseEvents'),
+            idx = #{idx};
         evt.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null); 
-
-        for ( i = 0, len = targets.length; i < len; ++i ) { 
-            targets[i].dispatchEvent(evt);     
-        } 
+        if (idx < targets.length) targets[idx].dispatchEvent(evt);
+        else throw('Couldnt find element #{idx} for selector #{selector}');
       };
     "
     @test.page.evaluate(fn)
@@ -228,6 +234,10 @@ class Body
         };
       "
       withValue @page.evaluate(evaluator)
+
+  assertCountAndAll: (selector, count, opts, assertionCallback) ->
+    @assertCount selector, opts, (c) -> c == count
+    @assertAll selector, opts, assertionCallback
 
 class PendingTest
   constructor: (@runner, @name) ->

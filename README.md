@@ -16,61 +16,43 @@ Once installed, you can simply use `ghostbuster [path/to/Ghostfile]` to run your
 
 As well, you can install Ghostbuster to run as a rake task. To do this, add this to your `Rakefile`:
 
-~~~~
     require 'ghostbuster/install_rake'
-~~~~
 
 ### Configuration via Ghostfile
 
 Your `Ghostfile` handles your configuration. To set the pattern use:
 
-~~~~
     ghost.pattern = "test_*.{js,coffee}" # this is the default
-~~~~
 
 To enable (or disable) screenshots use:
 
-~~~~
     ghost.take_screenshots! # or #do_not_takescreenshots! defaults to take_screenshots!
-~~~~
 
 To set the directory your screenshots will save to use:
 
-~~~~
     ghost.screenshot_dir = '.'
-~~~~
 
 To set the dimensions for the screenshots use:
 
-~~~~
-    ghost.screenshot_dimensions 800, 2000 # x, y
-~~~~
+    ghost.screenshot_dimensions 800, 2000 # width, height
 
 To set the command for starting your server use:
 
-~~~~
     ghost.start_command "./start.sh"
-~~~~
 
 To set the command for stopping your server use:
 
-~~~~
     ghost.stop_command "./stop.sh"
-~~~~
 
 To set the location of your phantomjs binary, use:
 
-~~~~
     ghost.phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
-~~~~
 
 If no Ghostfile is found, it will simply use the defaults.
 
 ### Output
 
 You should get some output that looks something like this.
-
-~~~~
 
     GhostBuster
     For /Users/joshbuddy/Development/ghostbuster/ghost/test_ghost.coffee
@@ -86,8 +68,6 @@ You should get some output that looks something like this.
       ✓ Simple form
       ◐ Form should do more things
 
-~~~~
-
 Your test directory should look something like this:
 
     ghost_tests/start.sh       # Used to start your web application
@@ -97,8 +77,6 @@ Your test directory should look something like this:
 Look inside `ghost` to see some examples of what actual tests would look like. Let's dive into a couple of simple examples.
 
 Here is one in Coffeescript.
-
-~~~~
 
     phantom.test.root = "http://127.0.0.1:4567" # you must specify your root.
 
@@ -110,11 +88,7 @@ Here is one in Coffeescript.
           li.innerHTML == "List item #{idx + 1}"
         @succeed()                              # all tests must succeed
 
-~~~~
-
 Here is the same test in Javascript.
-
-~~~~
 
     phantom.test.root = "http://127.0.0.1:4567";  // you must specify your root.
 
@@ -127,34 +101,80 @@ Here is the same test in Javascript.
         this.succeed();
       });                                         
     });
-~~~~
+
+## Page Controls
+
+The following methods are available within your test.
+
+### get
+
+*Arguments*: location, [options], callback
+
+This location will be relative to your root if it doesn't start with "http". Your callback will be called when the document is ready.
+
+### click
+
+*Arguments*: selector, [index]
+
+This will click the nth element matching the selector. If no index is specified it uses the first one found.
+
+### input
+
+*Arguments*: selector, text
+
+This will fill in the matching form elements with the text given.
+
+### wait
+
+*Arguments*: seconds, callback
+
+This will wait `seconds` secs and then call your callback.
 
 ## Assertions
 
 Assertions are run in order, and only one assertion at a time can run. An assertion will have at most one second to complete. If you want to change the total amount of time an assertion will take, you can supply that time.
 
-~~~~
     @body.assertFirst 'p', total: 3, (p) ->           # this asserts the first paragraph's inner text
-~~~~
 
-The available assertions are:
+The available assertion function are available on `body`:
 
-* _assertFirst_ : This asserts for the first matching DOM element
-* _assertAll_ : This asserts for the each matching DOM element
-* _assertLocation_ : This asserts the current browser location
-* _assertCount_ : This asserts the number of elements matching a selector
+### assertFirst
 
-The closures passed for matching have access to the real DOM node, however, they do not have any access to the outside context. They must return true if the assertion is passed, anything else will be interpreted as failure.
+*Arguments*: selector, callback
 
-## Before and after
+The callback will be called with the first matching DOM element for the selector. The callback must return `true` if this assertion is met.
+
+### assertAll
+
+*Arguments*: selector, callback
+
+The callback will be called for each matching DOM element for the selector. The arguments supplied to the callback is the DOM element and the index (starting at 0). The callback must return `true` if this assertion is met.
+
+### assertLocation
+
+*Arguments*: location
+
+This assertion will attempt to match the current browser location. If your location does not start with `http`, it will be considered relative to the root of your test.
+
+### assertCount
+
+*Arguments*: selector, callback
+
+This callback will be called with the number of matching DOM elements for this selector. The callback must return `true` if this assertion is met.
+
+### assertCountAndAll
+
+*Arguments*: selector, count, callback
+
+The callback will be called for each matching DOM element for the selector. It will only be called if the number of matching elements is equal to `count`. The arguments supplied to the callback is the DOM element and the index (starting at 0). The callback must return `true` if this assertion is met.
+
+## Before and After
 
 You can add an arbitrary number of before and after blocks to be run within the context of your test. Simply call `before` and `after` on your test to add them. You have to call @succeed in the before block to continue processing your test.
 
-~~~~
     phantom.test.before ->
       # do some setup
       @succeed()
 
     phantom.test.after ->
       # do some teardown
-~~~~

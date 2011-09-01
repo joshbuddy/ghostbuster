@@ -13,6 +13,11 @@ class App < Sinatra::Base
   get "/slow" do
     erb :slow
   end
+
+  get "/slow-index" do
+    sleep 2
+    erb :index
+  end
 end
 
 run App

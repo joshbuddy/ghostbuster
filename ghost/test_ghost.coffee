@@ -6,6 +6,12 @@ phantom.test.add "Simple index", ->
       p.innerHTML == 'This is my paragraph'
     @body.assertAll 'ul li', (li, idx) ->
       li.innerHTML == "List item #{idx + 1}"
+    @body.assertCountAndAll 'a', 1, (a, idx) ->
+      a.href == 'http://127.0.0.1:4567/form'
+    @succeed()
+
+phantom.test.add "Simple slow index", ->
+  @get '/slow-index', total: 3, ->
     @succeed()
 
 phantom.test.add "Form input", ->
@@ -35,4 +41,3 @@ phantom.test.add "Form input not equal", ->
     @body.assertFirst '#out', (out) ->
       out.innerHTML == 'this is NOT my input'
     @succeed()
-

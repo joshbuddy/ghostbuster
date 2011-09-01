@@ -3,6 +3,7 @@ Starting server
 GhostBuster
 For [1mtest_ghost.coffee[0m
   [32m✓[0m Simple index
+  [32m✓[0m Simple slow index
   [32m✓[0m Form input
   [32m✓[0m Link traversal
   [31m✗[0m Bad link traversal
@@ -26,5 +27,5 @@ For [1mtest_injs.js[0m
 
 For [1mtest_withoutroot.js[0m
   [31m✗[0m No root is defined
-8 success, 5 failure, 1 pending
+9 success, 5 failure, 1 pending
 Stopping server
