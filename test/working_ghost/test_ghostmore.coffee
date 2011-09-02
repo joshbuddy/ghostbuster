@@ -16,13 +16,18 @@ phantom.test.add "Simple form with wait", ->
     @wait 1, ->
       @succeed()
       
-phantom.test.add "Slow form", total: 10, ->
+phantom.test.add "Slow form", ->
   @get '/slow', ->
     @body.input "#in", "this is my input"
     @body.click "#btn"
     @body.assertFirst '#out', total: 3, (out) ->
       out.innerHTML == 'this is my input'
     @succeed()
+
+phantom.test.add "Simple form with specified max test duration", total: 2, ->
+  @get '/form', ->
+    @wait 1, ->
+      @succeed()
 
 phantom.test.add "Before block var", ->
   @get '/form', ->
