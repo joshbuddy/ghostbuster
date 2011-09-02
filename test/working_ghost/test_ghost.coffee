@@ -27,3 +27,4 @@ phantom.test.add "Link traversal", ->
     @body.click 'a'
     @body.assertLocation('/form')
     @succeed()
+

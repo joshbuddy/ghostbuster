@@ -1,3 +1,4 @@
 #!/bin/bash
 
-source ../server1/stop.sh
+cd ../server1
+./stop.sh

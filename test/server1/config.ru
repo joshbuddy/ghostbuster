@@ -18,6 +18,11 @@ class App < Sinatra::Base
     sleep 2
     erb :index
   end
+
+  get "/very-slow-index" do
+    sleep 7
+    erb :index
+  end
 end
 
 run App

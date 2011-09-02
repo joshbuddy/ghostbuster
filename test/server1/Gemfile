@@ -1,0 +1,6 @@
+source :rubygems
+
+gem 'ghostbuster', :path => '../..'
+gem 'thin'
+gem 'sinatra'
+gem 'rake'

@@ -1,3 +1,4 @@
 #!/bin/bash
 
-source ../server1/start.sh
+cd ../server1
+./start.sh

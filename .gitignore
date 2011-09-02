@@ -3,4 +3,4 @@
 Gemfile.lock
 pkg/*
 *.png
-this.log
+test/server1/log

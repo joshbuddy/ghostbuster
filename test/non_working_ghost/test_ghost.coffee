@@ -13,3 +13,8 @@ phantom.test.add "Form input not equal", ->
     @body.assertFirst '#out', (out) ->
       out.innerHTML == 'this is NOT my input'
     @succeed()
+
+phantom.test.addPending "To a non existent page", ->
+  @get '/404', ->
+    @succeed()
+  

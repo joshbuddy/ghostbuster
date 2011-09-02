@@ -52,7 +52,7 @@ class Test
     @waitForAssertions ->
       test = this
       fatalCallback = ->
-        test.fail("The request for #{@runner.normalizePath(path)} failed")
+        test.fail("The request for #{test.runner.normalizePath(path)} failed")
       fatal = setTimeout fatalCallback, if opts.total then opts.total * 1000 else 1000
       loadedCallback = (status) ->
         clearTimeout fatal
