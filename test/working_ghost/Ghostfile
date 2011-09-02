@@ -1,0 +1,4 @@
+ghost.pattern = "test_*.{coffee,js}"
+ghost.take_screenshots! # or do_not_takescreenshots! defaults to true
+ghost.screenshot_dir = '.'
+ghost.screenshot_dimensions 800, 2000

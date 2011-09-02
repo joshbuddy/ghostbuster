@@ -10,7 +10,11 @@ class Test
     @assertions = []
     @seenCallbacks = []
     @assertionIndex = 0
-  nameForRender: -> "#{@runner.suite.screenshot_dir}/#{@runner.nameForRender()}-#{@name.toLowerCase()}".replace(///\s///g, '_').replace(///'///g, '')
+  nameForRender: ->
+    name = "#{@runner.suite.screenshot_dir}/#{@runner.nameForRender()}-#{@name.toLowerCase()}"
+    name = name.replace(///\s///g, '_')
+    name = name.replace(///'///g, '')
+    "#{name}-#{++@assertionIndex}.png"
   getLastError: -> @runner.lastErrors[@name]
   resetLastError: -> delete @runner.lastErrors[@name]
   setLastError: (error) ->
@@ -48,7 +52,7 @@ class Test
     @waitForAssertions ->
       test = this
       fatalCallback = ->
-        test.fail("The request for #{@runner.normalizePath(path)} failed")
+        test.fail("The request for #{test.runner.normalizePath(path)} failed")
       fatal = setTimeout fatalCallback, if opts.total then opts.total * 1000 else 1000
       loadedCallback = (status) ->
         clearTimeout fatal
@@ -56,6 +60,8 @@ class Test
         test.seenCallbacks.push getCallback # traversing links causes this to get re-fired.
         switch status
           when 'success'
+            if test.runner.useScreenshots()
+              test.page.render test.nameForRender()
             test.body = new Body(test)
             getCallback.call(test) if getCallback
           when 'fail'
@@ -69,18 +75,17 @@ class Test
     @stopTestTimer()
     @callback(false, msg)
   assert: (opts, valueFetcher) ->
-    @assertions.push(new Assertion(this, ++@assertionIndex, opts, valueFetcher))
+    @assertions.push(new Assertion(this, opts, valueFetcher))
     @assertions[0].start() if @assertions.length == 1
   wait: (time, callback) ->
     test = this
     setTimeout (-> callback.call(test)), time * 1000
 
 class Assertion
-  constructor: (@test, @idx, @opts, @fetcher) ->
+  constructor: (@test, @opts, @fetcher) ->
     @count = 0
     @totalTime = if @opts['total'] then @opts['total'] * 1000 else 1000
     @everyTime = if @opts['every'] then @opts['every'] else 75
-  nameForRender: -> "#{@test.nameForRender()}-#{@idx}.png"
   start: ->
     test              = @test
     assertion         = this
@@ -99,7 +104,7 @@ class Assertion
         test.assertions.splice(test.assertions.indexOf(assertion), 1)
         clearTimeout assertion.fatal
         if test.runner.useScreenshots()
-          test.page.render assertion.nameForRender()
+          test.page.render test.nameForRender()
         if test.assertions.length > 0
           test.assertions[0].start()
       else
@@ -144,7 +149,7 @@ class Body
         var evaluator = function() {
           try {
             var assertionCallback = #{assertionCallback.toString()};
-            var count = document.querySelector('#{selector}').length;
+            var count = document.querySelectorAll('#{selector}').length;
             var ret = assertionCallback(count);
             if (ret) {
               return true;
@@ -317,7 +322,8 @@ class TestFile
         console.log "  \033[31m\u2717\033[0m #{name}\n    #{@lastErrors[name] || "There was a problem"}"
     console.log ""
     @suite.report(success, failure, pending)
-console.log "GhostBuster"
+
+console.log "Running tests..."
 
 class TestSuite
   constructor: (@args) ->

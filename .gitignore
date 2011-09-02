@@ -2,4 +2,5 @@
 .bundle
 Gemfile.lock
 pkg/*
-ghost/log/thin.log
+*.png
+test/server1/log

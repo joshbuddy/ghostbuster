@@ -28,16 +28,3 @@ phantom.test.add "Link traversal", ->
     @body.assertLocation('/form')
     @succeed()
 
-phantom.test.add "Bad link traversal", ->
-  @get '/', ->
-    @body.click 'a'
-    @body.assertLocation('/not-correct')
-    @succeed()
-    
-phantom.test.add "Form input not equal", ->
-  @get '/form', ->
-    @body.input "#in", "this is my input"
-    @body.click "#btn"
-    @body.assertFirst '#out', (out) ->
-      out.innerHTML == 'this is NOT my input'
-    @succeed()
