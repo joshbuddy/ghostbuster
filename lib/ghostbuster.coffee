@@ -1,5 +1,5 @@
 class Test
-  constructor: (@runner, @name, @testBody) ->
+  constructor: (@runner, @name, @maxDuration, @testBody) ->
     @page = new WebPage()
     if @runner.useScreenshots()
       @page.viewportSize = @runner.viewportDimensions()
@@ -42,7 +42,7 @@ class Test
     @testTimer ||= setTimeout (->
       test.setLastError("This test took too long")
       test.fail()
-    ), 5000
+    ), @maxDuration
   runWithFunction: (fn, @callback) ->
     fn.call(this)
   get: (path, opts, getCallback) ->
@@ -262,10 +262,14 @@ class TestFile
   addPending: (name, body) -> @tests.push new PendingTest(this, name)
   before: (body) -> @befores.push(body)
   after: (body) -> @afters.push(body)
-  add: (name, body) ->
+  add: (name, opts, body) ->
+    unless body?
+      body = opts
+      opts = {}
     for test in @tests
       throw("Identically named test already exists for name #{name} in #{@name}") if test.name == name
-    @tests.push new Test(this, name, body)
+    maxDuration = (opts.total || 5) * 1000
+    @tests.push new Test(this, name, maxDuration, body)
   run: (callback, idx) ->
     throw "No root is defined" unless @root?
     testFile = this

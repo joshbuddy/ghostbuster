@@ -24,6 +24,11 @@ phantom.test.add "Slow form", ->
       out.innerHTML == 'this is my input'
     @succeed()
 
+phantom.test.add "Simple form with specified max test duration", total: 2, ->
+  @get '/form', ->
+    @wait 1, ->
+      @succeed()
+
 phantom.test.add "Before block var", ->
   @get '/form', ->
     @body.input "#in", @var

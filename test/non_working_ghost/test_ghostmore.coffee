@@ -7,3 +7,8 @@ phantom.test.add "This test will explode!", ->
 phantom.test.add "This test has no succeed", ->
   @get '/form', ->
     "so, like, this test sucks"
+
+phantom.test.add "This test sets its max test duration too low", total: 1, ->
+  @get '/form', ->
+    @wait 2, ->
+      @succeed()
