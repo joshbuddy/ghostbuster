@@ -40,8 +40,7 @@ class Test
   startTestTimer: ->
     test = this
     @testTimer ||= setTimeout (->
-      test.setLastError("This test took too long")
-      test.fail()
+      test.fail("This test took too long")
     ), @maxDuration
   runWithFunction: (fn, @callback) ->
     fn.call(this)
@@ -52,7 +51,7 @@ class Test
     @waitForAssertions ->
       test = this
       fatalCallback = ->
-        test.fail("The request for #{test.runner.normalizePath(path)} failed")
+        test.fail("The request for #{test.runner.normalizePath(path)} timed out")
       fatal = setTimeout fatalCallback, if opts.total then opts.total * 1000 else 1000
       loadedCallback = (status) ->
         clearTimeout fatal
@@ -65,7 +64,7 @@ class Test
             test.body = new Body(test)
             getCallback.call(test) if getCallback
           when 'fail'
-            test.fail()
+            test.fail("The request for #{test.runner.normalizePath(path)} failed")
       @page.open @runner.normalizePath(path), loadedCallback
   succeed: ->
     @waitForAssertions ->
@@ -290,7 +289,8 @@ class TestFile
             return
           processBefore 0, ->
             try
-              test.run (state) ->
+              test.run (state, msg) ->
+                testFile.lastErrors[test.name] = msg
                 testStates[test.name] = state
                 nextTest(count + 1)
             catch e

@@ -17,4 +17,7 @@ phantom.test.add "Form input not equal", ->
 phantom.test.addPending "To a non existent page", ->
   @get '/404', ->
     @succeed()
-  
+
+phantom.test.add "To an invalid URL", ->
+  @get 'http://127.0.0.1:this-url-is-invalid', ->
+    @succeed()
