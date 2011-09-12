@@ -143,7 +143,8 @@ class Body
       opts = {}
     test = @test
     @test.assert opts, (withValue) ->
-      alerter = if test.getLastError()? then "" else "alert('Assert count for selector #{selector} did not meet expectations, last count is '+count);"
+      assertionDescription = if opts.name then "\"#{opts.name}\"" else "for selector #{selector}"
+      alerter = if test.getLastError()? then "" else "alert('Assert count #{assertionDescription} did not meet expectations, last count is '+count);"
       eval "
         var evaluator = function() {
           try {
@@ -171,7 +172,8 @@ class Body
     test = @test
     location = @test.runner.normalizePath(path)
     @test.assert opts, (withValue) ->
-      alerter = if test.getLastError()? then "" else "alert('Assert location failed: Excepted #{location}, got '+currentLocation);"
+      assertionDescription = if opts.name then " \"#{opts.name}\"" else ""
+      alerter = if test.getLastError()? then "" else "alert('Assert location#{assertionDescription} failed: Excepted #{location}, got '+currentLocation);"
       eval "
         var fn = function() {
           var currentLocation = window.location.href;
@@ -191,7 +193,8 @@ class Body
       opts = {}
     test = @test
     @test.assert opts, (withValue) ->
-      alerter = if test.getLastError()? then "" else "alert('Assert first for selector #{selector} did not meet expectations');"
+      assertionDescription = if opts.name then "\"#{opts.name}\"" else "for selector #{selector}"
+      alerter = if test.getLastError()? then "" else "alert('Assert first #{assertionDescription} did not meet expectations');"
       eval "
         var evaluator = function() {
           try {
@@ -218,6 +221,7 @@ class Body
       assertionCallback = opts
       opts = {}
     @test.assert opts, (withValue) ->
+      assertionDescription = if opts.name then "\"#{opts.name}\"" else "for selector #{selector}"
       eval "
         var evaluator = function() {
           try {
@@ -226,7 +230,7 @@ class Body
             if (list.length == 0) throw('list is empty');
             for (var i=0; i != list.length; i++) {
               if (!assertionCallback(list[i], i)) {
-                alert('Assert all for selector #{selector} on item '+i+' didn\\'t meet expectations');
+                alert('Assert all #{assertionDescription} on item '+i+' didn\\'t meet expectations');
                 return false;
               }
             }
