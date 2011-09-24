@@ -339,33 +339,37 @@ class TestSuite
     @failure += failure
     @pending += pending
   run: ->
-    @screenshots    = @args[0] == 'true'
-    @screenshot_x   = @args[1]
-    @screenshot_y   = @args[2]
-    @screenshot_dir = @args[3]
-    count = 4
-    suite = this
-    runNextTest = ->
-      if suite.args.length == count
-        console.log "#{suite.success} success, #{suite.failure} failure, #{suite.pending} pending"
-        phantom.exit (if suite.failure == 0 then 0 else 1)
-      else
-        testFile = suite.args[count]
-        phantom.test = new TestFile(suite, testFile)
-        if phantom.injectJs(testFile)
-          try
-            phantom.test.run ->
+    if phantom.version.major == 1 and phantom.version.minor == 3
+      @screenshots    = @args[0] == 'true'
+      @screenshot_x   = @args[1]
+      @screenshot_y   = @args[2]
+      @screenshot_dir = @args[3]
+      count = 4
+      suite = this
+      runNextTest = ->
+        if suite.args.length == count
+          console.log "#{suite.success} success, #{suite.failure} failure, #{suite.pending} pending"
+          phantom.exit (if suite.failure == 0 then 0 else 1)
+        else
+          testFile = suite.args[count]
+          phantom.test = new TestFile(suite, testFile)
+          if phantom.injectJs(testFile)
+            try
+              phantom.test.run ->
+                count++
+                runNextTest()
+            catch e
+              console.log "For \033[1m#{testFile}\033[0m"
+              console.log "  \033[31m\u2717\033[0m #{e.toString()}"
+              suite.failure++
               count++
               runNextTest()
-          catch e
-            console.log "For \033[1m#{testFile}\033[0m"
-            console.log "  \033[31m\u2717\033[0m #{e.toString()}"
-            suite.failure++
-            count++
-            runNextTest()
-        else
-          console.log "Unable to load #{testFile}"
-    runNextTest()
+          else
+            console.log "Unable to load #{testFile}"
+      runNextTest()
+    else
+      console.log "Phantom version must be 1.3.x"
+      phantom.exit 1
 
 if phantom.args.length == 0
   console.log("You need to specify a test file")
