@@ -25,7 +25,12 @@ class Ghostbuster
     Dir.chdir(@dir) do
       load_config
       spinner "Starting server" do
-        sh @config.start_command
+        if @config.verbose
+          puts `#{@config.start_command}`
+          raise unless $!.success?
+        else
+          sh @config.start_command
+        end
         sleep 2
       end
       begin
@@ -37,7 +42,12 @@ class Ghostbuster
         end
       ensure
         spinner "Stopping server" do
-          sh @config.stop_command
+          if @config.verbose
+            puts `#{@config.stop_command}`
+            raise unless $!.success?
+          else
+            sh @config.stop_command
+          end
         end
         if @config.screenshots?
           spinner "Cleaning up temporary screenshots" do

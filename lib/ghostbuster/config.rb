@@ -1,6 +1,6 @@
 class Ghostbuster
   class Config
-    attr_accessor :pattern, :screenshot_dir, :start_command, :stop_command, :phantom_bin, :temp_dir
+    attr_accessor :pattern, :screenshot_dir, :start_command, :stop_command, :phantom_bin, :temp_dir, :verbose
     attr_reader :screenshot_x, :screenshot_y
     def initialize(path_to_file = nil)
       @config_file = path_to_file || './Ghostfile'
@@ -9,6 +9,7 @@ class Ghostbuster
       @phantom_bin = File.join(ENV['HOME'], '.ghostbuster', 'phantomjs')
       @screenshot_dir = "."
       @screenshots = true
+      @verbose = false
       @temp_dir = "/tmp"
       @start_command, @stop_command = "./start.sh", "./stop.sh"
       if File.exist?(@config_file)
