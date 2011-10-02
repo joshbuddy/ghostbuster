@@ -37,8 +37,10 @@ class Ghostbuster
         _, status = Process.waitpid2 fork { 
           exec("#{@config.phantom_bin} #{@ghost_lib} #{@config.screenshots?} #{@config.screenshot_x} #{@config.screenshot_y} #{@temporary_screenshot_dir} #{Dir[@config.pattern].to_a.join(' ')}") 
         }
-        spinner "Copying screenshots" do
-          compress_and_copy_screenshots if status.success? && @config.screenshots?
+        if status.success? && @config.screenshots?
+          spinner "Copying screenshots" do
+            compress_and_copy_screenshots
+          end
         end
       ensure
         spinner "Stopping server" do
