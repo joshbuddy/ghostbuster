@@ -6,6 +6,11 @@ phantom.test.add "Bad link traversal", ->
     @body.assertLocation('/not-correct')
     @succeed()
     
+phantom.test.add "Bad click selector", ->
+  @get '/', ->
+    @body.click 'i-just-made-this-up'
+    @succeed()
+
 phantom.test.add "Form input not equal", ->
   @get '/form', ->
     @body.input "#in", "this is my input"

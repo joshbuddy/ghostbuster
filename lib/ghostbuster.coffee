@@ -123,19 +123,27 @@ class Body
     "
     @test.page.evaluate(input)
 
-  click: (selector, idx) ->
-    idx ||= 0
-    eval "
-      var fn = function() {
-        var targets = document.querySelectorAll('#{selector}'),
-            evt = document.createEvent('MouseEvents'),
-            idx = #{idx};
-        evt.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null); 
-        if (idx < targets.length) targets[idx].dispatchEvent(evt);
-        else throw('Couldnt find element #{idx} for selector #{selector}');
-      };
-    "
-    @test.page.evaluate(fn)
+  click: (selector, opts) ->
+    opts ||= {}
+    test = @test
+    @test.assert opts, (withValue) ->
+      idx = opts.index || 0
+      eval "
+        var evaluator = function() {
+          var targets = document.querySelectorAll('#{selector}'),
+              evt = document.createEvent('MouseEvents'),
+              idx = #{idx};
+          evt.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null); 
+          if (idx < targets.length) {
+            targets[idx].dispatchEvent(evt);
+            return true;
+          } else {
+            alert('Couldn\\'t find element #{idx} for selector #{selector}');
+            return false;
+          }
+        };
+      "
+      withValue @page.evaluate(evaluator)
 
   assertCount: (selector, opts, assertionCallback) ->
     unless assertionCallback?
