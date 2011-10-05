@@ -57,10 +57,10 @@ class Test
         clearTimeout fatal
         return if test.seenCallbacks.indexOf(getCallback) != -1
         test.seenCallbacks.push getCallback # traversing links causes this to get re-fired.
+        if test.runner.useScreenshots()
+          test.page.render test.nameForRender()
         switch status
           when 'success'
-            if test.runner.useScreenshots()
-              test.page.render test.nameForRender()
             test.body = new Body(test)
             getCallback.call(test) if getCallback
           when 'fail'
@@ -93,6 +93,8 @@ class Assertion
     if @count == 0
       test.stopTestTimer()
       fatalCallback = ->
+        if test.runner.useScreenshots()
+          test.page.render test.nameForRender()
         test.fail(test.getLastError() || "This assertion failed to complete.")
       @fatal = setTimeout(fatalCallback, assertion.totalTime)
     @fetcher.call test, (val) ->

@@ -37,7 +37,7 @@ class Ghostbuster
         _, status = Process.waitpid2 fork { 
           exec("#{@config.phantom_bin} #{@ghost_lib} #{@config.screenshots?} #{@config.screenshot_x} #{@config.screenshot_y} #{@temporary_screenshot_dir} #{Dir[@config.pattern].to_a.join(' ')}") 
         }
-        if status.success? && @config.screenshots?
+        if @config.screenshots?
           spinner "Copying screenshots" do
             compress_and_copy_screenshots
           end
