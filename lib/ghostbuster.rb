@@ -15,8 +15,13 @@ class Ghostbuster
   def initialize(path)
     STDOUT.sync = true
     @path = path && File.exist?(path) ? path : '.'
-    @dir = File.directory?(@path) ? @path : File.basename(@path)
-    @file = File.directory?(@dir) ? File.join(@dir, 'Ghostfile') : @dir
+    if File.directory?(@path)
+      @dir = @path
+      @file = 'Ghostfile'
+    else
+      @dir = File.dirname(@path)
+      @file = File.basename(@path)
+    end
     @ghost_lib = File.expand_path(File.join(File.dirname(__FILE__), "ghostbuster.coffee"))
   end
 
