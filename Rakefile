@@ -18,7 +18,9 @@ namespace :test do
           end
           begin
             matcher.each{|m| out[m] or raise("Couldn't match for #{m.inspect}")}
-            raise("There are a weird number of screenshots") unless Dir['*.png'].to_a.size == 15
+            real_size = Dir['*.png'].to_a.size
+            expected_size = 14
+            raise("There are a weird number of screenshots, expected #{expected_size}, got #{real_size}") unless expected_size == real_size
             exit
           rescue
             puts $!.message
