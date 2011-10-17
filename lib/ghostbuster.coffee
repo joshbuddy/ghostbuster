@@ -181,7 +181,11 @@ class Body
           test.body.assertLocation(opts.path)
         else
           test.body.refuteLocation(currentLocation)
-      withValue @page.evaluate(evaluator)
+        page = @page
+        fn = -> withValue(val)
+        setTimeout fn, 50
+      else
+        withValue @page.evaluate(evaluator)
 
   assertCount: (selector, opts, assertionCallback) ->
     unless assertionCallback?
