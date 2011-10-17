@@ -1,6 +1,13 @@
 class Test
   constructor: (@runner, @name, @maxDuration, @testBody) ->
     @page = new WebPage()
+    @resources = []
+    resources = @resources
+    @page.onResourceRequested = (req) ->
+      resources.push(req.url)
+    @page.onResourceReceived = (req) ->
+      while (index = resources.indexOf(req.url)) != -1
+        resources.splice(index, 1)
     if @runner.useScreenshots()
       @page.viewportSize = @runner.viewportDimensions()
     @page.onConsoleMessage = (msg) ->
@@ -21,7 +28,7 @@ class Test
     @runner.lastErrors[@name] = error
   waitForAssertions: (whenDone) ->
     @stopTestTimer()
-    if @assertions.length == 0
+    if @assertions.length == 0 and @resources.length == 0
       @startTestTimer()
       whenDone.call(this)
     else
