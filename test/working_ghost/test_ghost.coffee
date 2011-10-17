@@ -34,7 +34,7 @@ phantom.test.add "Link traversal", ->
 phantom.test.add "Link traversal with counter-case", ->
   @get '/', ->
     @body.click 'a'
-    @body.assertNotLocation('/')
+    @body.refuteLocation('/')
     @succeed()
 
 phantom.test.add "Click follow", ->

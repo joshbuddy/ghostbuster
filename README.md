@@ -118,6 +118,13 @@ This location will be relative to your root if it doesn't start with "http". You
 
 This will click the nth element matching the selector. If no index is specified it uses the first one found.
 
+### clickFollow
+
+*Arguments*: selector, [index or options]
+
+This will click the nth element matching the selector and assert the location changed. If no index is specified it uses the first one found.
+If no path option is given, it will merely assert that the location changed.
+
 ### input
 
 *Arguments*: selector, text
@@ -157,6 +164,12 @@ The callback will be called for each matching DOM element for the selector. The 
 *Arguments*: location, [options]
 
 This assertion will attempt to match the current browser location. If your location does not start with `http`, it will be considered relative to the root of your test.
+
+### refuteLocation
+
+*Arguments*: location, [options]
+
+This assertion will attempt to refute the current browser location. If your location does not start with `http`, it will be considered relative to the root of your test.
 
 ### assertCount
 

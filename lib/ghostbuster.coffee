@@ -173,7 +173,7 @@ class Body
         if opts.path?
           test.body.assertLocation(opts.path)
         else
-          test.body.assertNotLocation(currentLocation)
+          test.body.refuteLocation(currentLocation)
       withValue @page.evaluate(evaluator)
 
   assertCount: (selector, opts, assertionCallback) ->
@@ -226,7 +226,7 @@ class Body
       "
       withValue @page.evaluate(fn)
 
-  assertNotLocation: (path, opts) ->
+  refuteLocation: (path, opts) ->
     opts ||= {}
     test = @test
     location = @test.runner.normalizePath(path)
