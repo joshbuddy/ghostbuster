@@ -6,8 +6,11 @@ phantom.test.add "Simple index", ->
       p.innerHTML == 'This is my paragraph'
     @body.assertAll 'ul li', (li, idx) ->
       li.innerHTML == "List item #{idx + 1}"
-    @body.assertCountAndAll 'a', 1, (a, idx) ->
-      a.href == 'http://127.0.0.1:4567/form'
+    @body.assertCountAndAll 'a', 2, (a, idx) ->
+      if idx == 0
+        a.href == 'http://127.0.0.1:4567/form'
+      else if idx == 1
+        a.href == 'javascript:%20false;'
     @succeed()
 
 phantom.test.add "Simple slow index", ->
@@ -26,5 +29,21 @@ phantom.test.add "Link traversal", ->
   @get '/', ->
     @body.click 'a'
     @body.assertLocation('/form')
+    @succeed()
+
+phantom.test.add "Link traversal with counter-case", ->
+  @get '/', ->
+    @body.click 'a'
+    @body.assertNotLocation('/')
+    @succeed()
+
+phantom.test.add "Click follow", ->
+  @get '/', ->
+    @body.clickFollow 'a'
+    @succeed()
+
+phantom.test.add "Click follow with positive case", ->
+  @get '/', ->
+    @body.clickFollow 'a', path: "/form"
     @succeed()
 

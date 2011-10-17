@@ -5,7 +5,12 @@ phantom.test.add "Bad link traversal", ->
     @body.click 'a'
     @body.assertLocation('/not-correct')
     @succeed()
-    
+
+phantom.test.add "Bad click follow", ->
+  @get '/', ->
+    @body.clickFollow '#hiya'
+    @succeed()
+
 phantom.test.add "Bad click selector", ->
   @get '/', ->
     @body.click 'i-just-made-this-up'

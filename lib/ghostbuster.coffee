@@ -147,6 +147,35 @@ class Body
       "
       withValue @page.evaluate(evaluator)
 
+  clickFollow: (selector, opts) ->
+    opts ||= {}
+    test = @test
+    @test.assert opts, (withValue) ->
+      idx = opts.index || 0
+      currentLocation = @page.evaluate -> return window.location.href
+      eval "
+        var evaluator = function() {
+          var targets = document.querySelectorAll('#{selector}'),
+              evt = document.createEvent('MouseEvents'),
+              idx = #{idx};
+          evt.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null); 
+          if (idx < targets.length) {
+            targets[idx].dispatchEvent(evt);
+            return true;
+          } else {
+            alert('Couldn\\'t find element #{idx} for selector #{selector}');
+            return false;
+          }
+        };
+      "
+      val = @page.evaluate(evaluator)
+      if val?
+        if opts.path?
+          test.body.assertLocation(opts.path)
+        else
+          test.body.assertNotLocation(currentLocation)
+      withValue @page.evaluate(evaluator)
+
   assertCount: (selector, opts, assertionCallback) ->
     unless assertionCallback?
       assertionCallback = opts
@@ -188,6 +217,27 @@ class Body
         var fn = function() {
           var currentLocation = window.location.href;
           if (window.location.href === '#{location}') {
+            return true;
+          } else {
+            #{alerter}
+            return false;
+          }
+        }
+      "
+      withValue @page.evaluate(fn)
+
+  assertNotLocation: (path, opts) ->
+    opts ||= {}
+    test = @test
+    location = @test.runner.normalizePath(path)
+    @test.assert opts, (withValue) ->
+      assertionDescription = if opts.name then " \"#{opts.name}\"" else ""
+      alerter = if test.getLastError()? then "" else "alert('Assert not location#{assertionDescription} failed: Excepted not #{location}, got '+currentLocation);"
+      eval "
+        var fn = function() {
+          var currentLocation = window.location.href;
+          if (window.location.href !== '#{location}') {
+            console.log('succeeded with ' +window.location.href);
             return true;
           } else {
             #{alerter}
