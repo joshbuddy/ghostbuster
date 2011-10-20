@@ -36,7 +36,7 @@ class Ghostbuster
         else
           sh @config.start_command
         end
-        sleep 2
+        sleep @config.start_wait
       end
       begin
         _, status = Process.waitpid2 fork { 
