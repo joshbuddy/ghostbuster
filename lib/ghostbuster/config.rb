@@ -12,6 +12,7 @@ class Ghostbuster
       @verbose = false
       @temp_dir = "/tmp"
       @start_command, @stop_command = "./start.sh", "./stop.sh"
+      @start_wait = 2
       if File.exist?(@config_file)
         instance_eval File.read(@config_file), @config_file, 1
       end

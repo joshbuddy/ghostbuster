@@ -40,6 +40,10 @@ To set the command for starting your server use:
 
     ghost.start_command "./start.sh"
 
+To set the timeout in seconds for the start_command to complete use:
+
+    ghost.start_wait = 2   # this is the default
+
 To set the command for stopping your server use:
 
     ghost.stop_command "./stop.sh"
