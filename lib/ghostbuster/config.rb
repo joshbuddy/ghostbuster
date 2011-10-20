@@ -1,6 +1,6 @@
 class Ghostbuster
   class Config
-    attr_accessor :pattern, :screenshot_dir, :start_command, :stop_command, :phantom_bin, :temp_dir, :verbose
+    attr_accessor :pattern, :screenshot_dir, :start_command, :stop_command, :phantom_bin, :temp_dir, :verbose, :start_wait
     attr_reader :screenshot_x, :screenshot_y
     def initialize(path_to_file = nil)
       @config_file = path_to_file || './Ghostfile'
