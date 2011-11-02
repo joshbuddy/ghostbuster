@@ -135,6 +135,12 @@ If no path option is given, it will merely assert that the location changed.
 
 This will fill in the matching form elements with the text given.
 
+### select
+
+*Arguments*: selector, newValue
+
+This will set a select box to a given value
+
 ### wait
 
 *Arguments*: seconds, callback

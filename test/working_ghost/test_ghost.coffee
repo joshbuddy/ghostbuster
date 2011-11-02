@@ -25,6 +25,13 @@ phantom.test.add "Form input", ->
       out.innerHTML == 'this is my input'
     @succeed()
 
+phantom.test.add "Select box input", ->
+  @get '/form', ->
+    @body.select "#sel", "test3"
+    @body.assertFirst '#out', (out) ->
+      out.innerHTML == 'test3'
+    @succeed()
+
 phantom.test.add "Link traversal", ->
   @get '/', ->
     @body.click 'a'

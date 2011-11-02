@@ -8,7 +8,7 @@ namespace :test do
     task task_name do
       print "#{task_name} ... "
       Dir.chdir("test/working_ghost") do
-        matcher = [/13 success, 0 failure, 1 pending/]
+        matcher = [/14 success, 0 failure, 1 pending/]
         fork {
           ENV['BUNDLE_GEMFILE'] = File.expand_path("./Gemfile")
           `bundle install`

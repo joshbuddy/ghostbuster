@@ -6,6 +6,11 @@
   <form>
   <input type="text" id="in">
   <input type="button" id="btn" onclick="document.getElementById('out').innerHTML = document.getElementById('in').value;">  
+  <select id="sel" onchange="document.getElementById('out').innerHTML = document.getElementById('sel').value">
+    <option value="test">test</option>
+    <option value="test2">test2</option>
+    <option value="test3">test3</option>
+  </select>
   </form>
   <p id="out"></p>
 </body>

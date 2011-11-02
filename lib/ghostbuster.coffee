@@ -132,6 +132,29 @@ class Body
     "
     @test.page.evaluate(input)
 
+  select: (selector, newValue, opts) ->
+    opts ||= {}
+    test = @test
+    @test.assert opts, (withValue) ->
+      idx = opts.index || 0
+      eval "
+        var evaluator = function() {
+          var targets = document.querySelectorAll('#{selector}'),
+              idx = #{idx},
+              newValue = '#{newValue}';
+          if (idx < targets.length) {
+            targets[idx].value = newValue;
+            targets[idx].onchange();
+            return true;
+          } else {
+            alert('Couldn\\'t find element #{idx} for selector #{selector}');
+            return false;
+          }
+        };
+      "
+      withValue @page.evaluate(evaluator)
+
+
   click: (selector, opts) ->
     opts ||= {}
     test = @test
