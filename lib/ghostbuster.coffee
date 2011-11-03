@@ -141,10 +141,12 @@ class Body
         var evaluator = function() {
           var targets = document.querySelectorAll('#{selector}'),
               idx = #{idx},
+              evt = document.createEvent('MutationEvents'),
               newValue = '#{newValue}';
           if (idx < targets.length) {
+            evt.initMutationEvent('change', true, true, window, targets[idx].value, newValue, 'value', MutationEvent.MODIFICATION); 
             targets[idx].value = newValue;
-            targets[idx].onchange();
+            targets[idx].dispatchEvent(evt);
             return true;
           } else {
             alert('Couldn\\'t find element #{idx} for selector #{selector}');
