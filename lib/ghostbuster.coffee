@@ -248,7 +248,7 @@ class Body
     location = @test.runner.normalizePath(path)
     @test.assert opts, (withValue) ->
       assertionDescription = if opts.name then " \"#{opts.name}\"" else ""
-      alerter = if test.getLastError()? then "" else "alert('Assert location#{assertionDescription} failed: Excepted #{location}, got '+currentLocation);"
+      alerter = if test.getLastError()? then "" else "alert('Assert location#{assertionDescription} failed: Expected #{location}, got '+currentLocation);"
       eval "
         var fn = function() {
           var currentLocation = window.location.href;
@@ -268,7 +268,7 @@ class Body
     location = @test.runner.normalizePath(path)
     @test.assert opts, (withValue) ->
       assertionDescription = if opts.name then " \"#{opts.name}\"" else ""
-      alerter = if test.getLastError()? then "" else "alert('Assert not location#{assertionDescription} failed: Excepted not #{location}, got '+currentLocation);"
+      alerter = if test.getLastError()? then "" else "alert('Assert not location#{assertionDescription} failed: Expected not #{location}, got '+currentLocation);"
       eval "
         var fn = function() {
           var currentLocation = window.location.href;

@@ -26,7 +26,7 @@ Your `Ghostfile` handles your configuration. To set the pattern use:
 
 To enable (or disable) screenshots use:
 
-    ghost.take_screenshots! # or #do_not_takescreenshots! defaults to take_screenshots!
+    ghost.take_screenshots! # or #do_not_take_screenshots! defaults to take_screenshots!
 
 To set the directory your screenshots will save to use:
 
