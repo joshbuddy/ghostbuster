@@ -63,7 +63,7 @@ class Ghostbuster
         end
       end
     end
-    exit(status.to_i)
+    status.to_i
   end
 
   def self.run(path)
@@ -73,9 +73,9 @@ class Ghostbuster
   private
   def compress_and_copy_screenshots
     FileUtils.rm_f(File.join(@config.screenshot_dir, "*.png"))
-    files = Dir[File.join(@temporary_screenshot_dir, '*.png')].to_a
+    files = Dir[File.join(@temporary_screenshot_dir, '*.png')].to_a.sort
     files.map{|f| f[/(.*?)-\d+\.png$/, 1]}.uniq.each do |cluster|
-      images = files.select{|f| f[cluster]}.sort_by{|f| Integer(f[/\-(\d+)\.png$/, 1])}
+      images = files.select{|f| f[/#{Regexp.quote(cluster)}-\d+\.png$/]}.sort_by{|f| Integer(f[/\-(\d+)\.png$/, 1])}
       idx = 0
       while idx < (images.size - 1)
         if Digest::MD5.file(images[idx]) == Digest::MD5.file(images[idx + 1])
