@@ -64,7 +64,7 @@ You should get some output that looks something like this.
       ✓ Form input
       ✓ Link traversal
       ✗ Bad link traversal
-        Assert location failed: Excepted http://127.0.0.1:4567/not-correct, got http://127.0.0.1:4567/
+        Assert location failed: Expected http://127.0.0.1:4567/not-correct, got http://127.0.0.1:4567/
       ✗ Form input not equal
         Assert first for selector #out did not meet expectations
 
