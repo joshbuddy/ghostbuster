@@ -19,7 +19,7 @@ namespace :test do
           begin
             matcher.each{|m| out[m] or raise("Couldn't match for #{m.inspect}")}
             real_size = Dir['*.png'].to_a.size
-            expected_size = 21
+            expected_size = 22
             raise("There are a weird number of screenshots, expected #{expected_size}, got #{real_size}") unless expected_size == real_size
             exit
           rescue
@@ -38,7 +38,7 @@ namespace :test do
   task :non_working do
     print "non_working_ghost ... "
     Dir.chdir("test/non_working_ghost") do
-      matcher = [/0 success, 10 failure, 1 pending/, /Bad link traversal\s+Assert location failed: Excepted http:\/\/127\.0\.0\.1:4567\/not-correct, got http:\/\/127\.0\.0\.1:4567\//, /Form input not equal\s+Assert first for selector #out did not meet expectations/, /To an invalid URL\s+The request for http:\/\/127\.0\.0\.1:this-url-is-invalid failed/, /This test will explode!\s+I hate you!/, /This test has no succeed\s+This test took too long/, /This test has a custom assertion name\s+Assert first "custom assertion name" did not meet expectations/, /Bad click selector\s+Couldn't find element 0 for selector i-just-made-this-up/, /Bad click follow\s+Assert not location failed: Excepted not http:\/\/127\.0\.0\.1:4567\/, got http:\/\/127\.0\.0\.1:4567\//]
+      matcher = [/0 success, 10 failure, 1 pending/m, %r|Bad link traversal\s+Assert location failed: Expected http://127.0.0.1:4567/not-correct, got http://127.0.0.1:4567/|im, /Form input not equal\s+Assert first for selector #out did not meet expectations/m, /To an invalid URL\s+The request for http:\/\/127\.0\.0\.1:this-url-is-invalid failed/m, /This test will explode!\s+I hate you!/m, /This test has no succeed\s+This test took too long/m, /This test has a custom assertion name\s+Assert first "custom assertion name" did not meet expectations/m, /Bad click selector\s+Couldn't find element 0 for selector i-just-made-this-up/m, /Bad click follow\s+Assert not location failed: Expected not http:\/\/127\.0\.0\.1:4567\/, got http:\/\/127\.0\.0\.1:4567\//m]
       fork {
         ENV['BUNDLE_GEMFILE'] = File.expand_path("./Gemfile")
         `bundle install`
