@@ -435,7 +435,7 @@ class TestSuite
     @failure += failure
     @pending += pending
   run: ->
-    if phantom.version.major == 1 and phantom.version.minor == 3
+    if phantom.version.major == 1 and phantom.version.minor == 5
       @screenshots    = @args[0] == 'true'
       @screenshot_x   = @args[1]
       @screenshot_y   = @args[2]
@@ -464,7 +464,7 @@ class TestSuite
             console.log "Unable to load #{testFile}"
       runNextTest()
     else
-      console.log "Phantom version must be 1.3.x"
+      console.log "Phantom version must be 1.5.x"
       phantom.exit 1
 
 if phantom.args.length == 0
