@@ -5,20 +5,20 @@ when /darwin/
   require 'fileutils'
   root = File.expand_path(File.join(ENV['HOME'], '.ghostbuster'))
   cache = File.expand_path(File.join(root, 'cache'))
-  unless File.exist?(File.join(root, 'version')) && File.read(File.join(root, 'version')) == '2'
+  unless File.exist?(File.join(root, 'version')) && File.read(File.join(root, 'version')) == '3'
     puts "Creating ghostbuster directory in your home"
     FileUtils.rm_rf(root)
     FileUtils.mkdir_p(root)
     FileUtils.mkdir_p(cache)
-    phantom_url = "http://phantomjs.googlecode.com/files/phantomjs-1.3.0-macosx-static-x86.zip"
+    phantom_url = "http://phantomjs.googlecode.com/files/phantomjs-1.5.0-macosx-static.zip"
     unless File.exist?(File.join(cache, File.basename(phantom_url)))
       Dir.chdir(cache) do
         puts "Downloading and installing phantom.js"
         system("curl #{phantom_url} -O") or raise("Unable to download from #{phantom_url}")
         system("unzip #{File.basename(phantom_url)}") or raise("Unable to unzip archive")
       end
-      File.exist?("#{cache}/phantomjs-1.3.0/bin/phantomjs") or raise("Unable to copy phantomjs from your disk image")
-      system("ln -s #{cache}/phantomjs-1.3.0/bin/phantomjs #{root}/phantomjs") or raise("Unable to copy phantomjs from your disk image")
+      File.exist?("#{cache}/phantomjs-1.5.0/bin/phantomjs") or raise("Unable to copy phantomjs from your disk image")
+      system("ln -s #{cache}/phantomjs-1.5.0/bin/phantomjs #{root}/phantomjs") or raise("Unable to copy phantomjs from your disk image")
       File.open("#{root}/version", 'w') {|f| f << '2' }
       puts "Done installing!"
     end
