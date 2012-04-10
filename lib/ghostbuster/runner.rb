@@ -10,7 +10,7 @@ class Ghostbuster
         puts "  Version #{VERSION}"
         exit(0)
       else
-        Ghostbuster.new(@args.first).run
+        exit Ghostbuster.new(@args.first).run
       end
     end
   end
